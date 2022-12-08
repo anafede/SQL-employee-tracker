@@ -1,7 +1,8 @@
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const consoleTable = require('console.table');
-// const { type } = require('os');
+require('dotenv').config();
+console.log(process.env);
 
 const connection = mysql.createConnection(
     {
@@ -9,8 +10,8 @@ const connection = mysql.createConnection(
       // MySQL username,
       user: 'root',
       // MySQL password
-      password: '2Orangecats!',
-      database: 'employeeTracker_db'
+      password: process.env.password,
+      database: 'employeeTracker_db',
     },
     console.log(`Connected to the employeeTracker database.`)
   );
@@ -76,7 +77,7 @@ viewAllEmployees = () => {
     connection.query( `SELECT * FROM employee`, (err, res) => {
         if (err) throw err;
         console.table('\n', res, '\n');
-    
+        begin();
     })
 };
 
@@ -84,6 +85,7 @@ viewAllRoles = () => {
     connection.query(`SELECT * FROM employeeRole`, (err, res) =>{
         if (err) throw err;
         console.table('\n', res, '\n');
+        begin();
     })
 };
 
@@ -91,6 +93,7 @@ viewAllDepartments = () =>{
     connection.query(`SELECT * FROM department`, (err, res) =>{
         if (err) throw err;
         console.table('\n', res, '\n');
+        begin();
     })
 }
 
@@ -133,6 +136,7 @@ addEmployee = () => {
             }, (err, res) =>{
                 if (err) throw err;
                 console.log(`${answers.firstName} ${answers.lastName} added to the database`);
+                begin();
             })
 
         });
@@ -153,6 +157,7 @@ addDepartment = () => {
         }, (err) => {
             if (err) throw err;
             console.log(`${answers.department} added to the database`);
+            begin();
         })
     })
 };
@@ -189,6 +194,7 @@ addRole = () => {
             }, (err) => {
                 if (err) throw err;
                 console.log(`${answers.title} added to database`);
+                begin();
             }
             )
         })
@@ -223,6 +229,7 @@ updateEmployeeRole = () =>{
             ); (err) =>{
                 if (err) throw err;
                 console.log('Employee updated in database');
+                begin();
             } 
         })
         

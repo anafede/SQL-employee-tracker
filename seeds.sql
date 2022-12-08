@@ -8,10 +8,10 @@ INSERT INTO employeeRole (title, salary, department_id) VALUES
 
 INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES
 ('Chris', 'Evans', 1, NULL),
-('Robin', 'Williams', 2, 1);
--- ('Hailey', 'Bieber', 'Lead Engineer', 'Engineering', 150000, NULL),
--- ('Harry', 'Styles', 'Software Engineer', 'Engineering', 12000, 3),
--- ('Bella', 'Hadid', 'Account Manager', 'Finance', 160000, NULL),
--- ('Andrew', 'Garfield', 'Accountant', 'Finance', 125000, 5),
--- ('Spongebob', 'Squarepants', 'Legal Team Lead', 'Legal', 250000, NULL),
--- ('Patrick', 'Star', 'Lawyer', 'Legal', 190000, 7);
+('Robin', 'Williams', 2, 1),
+('Hailey', 'Bieber', 3, NULL),
+('Harry', 'Styles', 4, 3),
+('Bella', 'Hadid', 5, NULL),
+('Andrew', 'Garfield', 6, 5),
+('Spongebob', 'Squarepants', 7, NULL),
+('Patrick', 'Star', 8, 7);
