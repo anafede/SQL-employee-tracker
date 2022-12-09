@@ -2,7 +2,6 @@ const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const consoleTable = require('console.table');
 require('dotenv').config();
-console.log(process.env);
 
 const connection = mysql.createConnection(
     {
@@ -18,7 +17,7 @@ const connection = mysql.createConnection(
 connection.connect((err) => {
 if (err) throw err;
     begin ();
-});  
+});
 
 function begin() {
     inquirer.prompt ({
@@ -33,12 +32,12 @@ function begin() {
            "Add role",
            "View all departments",
            "Add department",
-           "Quit" 
+           "Quit"
         ]
     })
     .then((answers) => {
         const {choices} = answers;
-    
+
         if (choices === 'View all employees'){
             viewAllEmployees();
             return;
@@ -103,36 +102,37 @@ addEmployee = () => {
         let addRole = res.map(employeeRole => ({name:employeeRole.title, value: employeeRole.role_id}));
     connection.query(`SELECT * FROM employee`, (err, res) =>{
         if (err) throw err;
-        let newEmployee = res.map(employee => ({name: employee.first_name + employee.last_name, value:employee.id}));
+     let newEmployee = res.map(employee => ({name: employee.first_name + " " + employee.last_name, value:employee.id}));
         inquirer.prompt([
             {
                 type: 'input',
-                name: 'firstName', 
+                name: 'firstName',
                 message: "What is the employee's first name?"
             },
             {
                 type: 'input',
-                name: 'lastName', 
+                name: 'lastName',
                 message: "What is the employee's last name?"
-            }, 
+            },
             {
                 type: 'rawlist',
                 name: 'role',
                 message: "What is the employee's role?",
                 choices: addRole
-            }, 
-            {
-                type: 'rawlist',
-                name: 'manager',
-                message: "Who is the employee's manager?",
-                choices: newEmployee
-            }
+            },
+            // {
+            //     type: 'rawlist',
+            //     name: 'manager',
+            //     message: "Who is the employee's manager?",
+            //     choices: newEmployee
+
+            // }
         ]).then((answers)=> {
             connection.query(`INSERT INTO employee SET ?`, {
                 first_name: answers.firstName,
                 last_name: answers.lastName,
                 role_id: answers.role,
-                manager_id: answers.manager
+                // manager_id: answers.manager
             }, (err, res) =>{
                 if (err) throw err;
                 console.log(`${answers.firstName} ${answers.lastName} added to the database`);
@@ -163,11 +163,11 @@ addDepartment = () => {
 };
 
 addRole = () => {
-    connection.query(`SELECT * FROM employeeRole`, (err, res) =>{
+    connection.query(`SELECT * FROM department`, (err, res) =>{
         if (err) throw err;
         let dept = res.map(department=>({
-            name: department.name,
-            value: department.id
+           title:department.title,
+           value: department.title
         }));
         inquirer.prompt([
             {
@@ -184,13 +184,12 @@ addRole = () => {
                 type: 'rawlist',
                 name: 'department',
                 message: 'What department are you adding this role to?',
-                choices: dept,
+                choices: dept
             },
         ]).then((answers)=>{
             connection.query(`INSERT INTO employeeRole SET ?`, {
                 title: answers.title,
-                salary: answers.salary,
-                department_id: answers.department
+                salary: answers.salary
             }, (err) => {
                 if (err) throw err;
                 console.log(`${answers.title} added to database`);
@@ -204,11 +203,13 @@ addRole = () => {
 updateEmployeeRole = () =>{
     connection.query(`SELECT * FROM employeeRole`, (err, res)=>{
         if (err) throw err;
-        let updateRole = res.map(employeeRole => ({name: employeeRole.title, value: employeeRole.id}));
+        let updateRole = res.map(employeeRole =>
+            ({title: employeeRole.title, value: employeeRole.title}));
     connection.query(`SELECT * FROM employee`, (err, res) => {
         if (err) throw err;
-        let selectEmployee = res.map(employee =>({name: employee.first_name + employee.last_name, value: employee.id}));
-        inquirer.prompt([
+        let selectEmployee = res.map(employee =>
+            ({name: employee.first_name + ' ' + employee.last_name}));
+    inquirer.prompt([
             {
                 type: 'rawlist',
                 name: 'employee',
@@ -222,23 +223,22 @@ updateEmployeeRole = () =>{
                 choices: updateRole
             },
         ]).then((answers) =>{
-            connection.query(`UPDATE employee SET ? WHERE ?`, {
-                role_id: answers.updatedRole},
-                {
-                employee_id: answers.employee},
-            ); (err) =>{
-                if (err) throw err;
-                console.log('Employee updated in database');
-                begin();
-            } 
-        })
-        
+                connection.query(`UPDATE employee SET ? WHERE ?`,
+                [{role_id: answers}, {employee_id: answers.selectEmployee} ],
+                    (err) =>{
+                    if (err) throw err;
+                    console.log('Employee updated in database');
+                    begin();
+                } )
+            })
+
+
     })
-       
+
     })
 }
 
 
 
-  
+
 
